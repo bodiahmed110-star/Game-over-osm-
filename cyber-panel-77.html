@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAME OVER OSM - Cyber Control Panel</title>
+    <style>
+        /* إعدادات المظهر السيبراني للوحة التحكم */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #03060f;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .panel-container {
+            width: 100%;
+            max-width: 550px;
+            background: rgba(11, 15, 25, 0.85);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(0, 210, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .panel-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #00d2ff;
+            text-shadow: 0 0 10px rgba(0, 102, 255, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .panel-subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #ff3b30;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .section-box {
+            background: rgba(18, 21, 32, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffea00;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 0;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            font-weight: 600;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            background-color: #070913;
+            border: 1px solid rgba(0, 210, 255, 0.15);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.3s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00d2ff, #0066ff);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 210, 255, 0.5);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* تنبيهات النجاح */
+        .alert {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+        .alert-success {
+            background-color: rgba(37, 211, 102, 0.15);
+            color: #25d366;
+            border: 1px solid rgba(37, 211, 102, 0.3);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+
+    <!-- تضمين مكتبات Firebase الأساسية للوحة -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <div class="panel-container">
+        <h1 class="panel-title">لوحة التحكم السيبرانية</h1>
+        <p class="panel-subtitle">SECURE ACCESS ONLY</p>
+
+        <!-- القسم الأول: إضافة مدرب للأساطير -->
+        <div class="section-box">
+            <h2 class="section-title">🏆 إضافة مدرب لقائمة الأساطير</h2>
+            <div class="form-group">
+                <label>اسم المدرب:</label>
+                <input type="text" id="coachName" placeholder="أدخل اسم المدرب بالكامل">
+            </div>
+            <div class="form-group">
+                <label>عدد البطولات المكتسبة:</label>
+                <input type="number" id="coachTrophies" min="1" max="50" placeholder="مثال: 3">
+            </div>
+            <button class="submit-btn" onclick="addLegend()">تحديث وإضافة للبث المباشر</button>
+            <div class="alert alert-success" id="alertLegend">تمت إضافة المدرب وتحديث الإحصائيات في الموقع تلقائياً!</div>
+        </div>
+
+        <!-- القسم الثاني: إضافة تيم فائز -->
+        <div class="section-box">
+            <h2 class="section-title">⚔️ إضافة تيم فائز جديد</h2>
+            <div class="form-group">
+                <label>اسم التيم الفائز:</label>
+                <input type="text" id="teamName" placeholder="مثال: كتيبة نيران التانجو">
+            </div>
+            <div class="form-group">
+                <label>أسماء أعضاء التيم (افصل بينهم بـ واو أو فاصلة):</label>
+                <input type="text" id="teamMembers" placeholder="مثال: أحمد، محمد، محمود">
+            </div>
+            <button class="submit-btn" style="background: linear-gradient(135deg, #00ffcc, #00aa88); color: #03060f;" onclick="addTeam()">تسجيل التيم الفائز</button>
+            <div class="alert alert-success" id="alertTeam">تم تسجيل التيم الفائز بنجاح!</div>
+        </div>
+
+        <!-- القسم الثالث: إضافة ملك ريمونتادا -->
+        <div class="section-box">
+            <h2 class="section-title">🔮 إضافة بطل لقائمة الريمونتادا</h2>
+            <div class="form-group">
+                <label>اسم بطل الريمونتادا:</label>
+                <input type="text" id="remontadaName" placeholder="أدخل اسم المدرب">
+            </div>
+            <button class="submit-btn" style="background: linear-gradient(135deg, #d300ff, #7700aa);" onclick="addRemontada()">تخليد في سجل الريمونتادا</button>
+            <div class="alert alert-success" id="alertRemontada">تم تخليد البطل في سجل الريمونتادا بنجاح!</div>
+        </div>
+
+    </div>
+
+    <script>
+        // إعدادات Firebase المربوطة بموقعك الأساسي
+        const firebaseConfig = { databaseURL: "https://game-over-osm-default-rtdb.firebaseio.com/" };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // دالة عرض التنبيه بشكل مؤقت
+        function showAlert(id) {
+            const alertBox = document.getElementById(id);
+            alertBox.style.display = 'block';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
+        }
+
+        // 1. دالة إضافة أسطورة جديدة
+        function addLegend() {
+            const name = document.getElementById('coachName').value.trim();
+            const trophies = parseInt(document.getElementById('coachTrophies').value);
+
+            if (name === "" || isNaN(trophies)) {
+                alert("برجاء إدخال اسم المدرب وعدد البطولات بشكل صحيح.");
+                return;
+            }
+
+            database.ref('legends').push({
+                name: name,
+                trophies: trophies
+            }).then(() => {
+                showAlert('alertLegend');
+                document.getElementById('coachName').value = "";
+                document.getElementById('coachTrophies').value = "";
+            });
+        }
+
+        // 2. دالة إضافة تيم فائز
+        function addTeam() {
+            const name = document.getElementById('teamName').value.trim();
+            const members = document.getElementById('teamMembers').value.trim();
+
+            if (name === "" || members === "") {
+                alert("برجاء إدخال اسم التيم وأسماء الأعضاء.");
+                return;
+            }
+
+            database.ref('teams').push({
+                name: name,
+                members: members
+            }).then(() => {
+                showAlert('alertTeam');
+                document.getElementById('teamName').value = "";
+                document.getElementById('teamMembers').value = "";
+            });
+        }
+
+        // 3. دالة إضافة ملك ريمونتادا
+        function addRemontada() {
+            const name = document.getElementById('remontadaName').value.trim();
+
+            if (name === "") {
+                alert("برجاء إدخال اسم مدرب الريمونتادا.");
+                return;
+            }
+
+            database.ref('remontada').push({
+                name: name
+            }).then(() => {
+                showAlert('alertRemontada');
+                document.getElementById('remontadaName').value = "";
+            });
+        }
+    </script>
+</body>
+</html>
